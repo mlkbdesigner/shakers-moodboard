@@ -52,6 +52,9 @@ export default async function MoodboardDetailPage({
   return (
     <>
       <Topbar>
+        <Link href={`/admin/${id}/editar`} className="btn btn-soft">
+          ✎ Editar
+        </Link>
         <Link href="/admin" className="btn btn-ghost">
           ← Painel
         </Link>
