@@ -18,6 +18,10 @@ const serif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Moodboard — Shakers",
   description: "Ferramenta de moodboard com feedback do cliente",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
