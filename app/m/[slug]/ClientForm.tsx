@@ -76,11 +76,11 @@ export function ClientForm({ moodboard, refs }: { moodboard: Mb; refs: Ref[] }) 
           response_id: resp.id,
           reference_id: r.id,
           estilo: it.estilo ?? null,
-          cores: it.cores ?? null,
+          cores: null,
           vibe: it.vibe ?? null,
           tipografia: it.tipografia ?? null,
           composicao: it.composicao ?? null,
-          mensagem: it.mensagem ?? null,
+          mensagem: null,
           why: it.why?.trim() || null,
         };
       });
