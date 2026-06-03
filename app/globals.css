@@ -725,6 +725,47 @@ body {
   color: var(--g-600);
 }
 
+.inbox-card-wrap {
+  position: relative;
+}
+.card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+.card-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--muted);
+  transition: all 0.15s;
+  padding: 0;
+}
+.card-action-btn:hover {
+  background: var(--g-50);
+  border-color: var(--g-300);
+  color: var(--g-700);
+}
+.card-action-btn.danger:hover {
+  background: var(--no-bg);
+  border-color: #e7b9af;
+  color: var(--no);
+}
+.card-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* link share box */
 .share {
   background: var(--g-50);

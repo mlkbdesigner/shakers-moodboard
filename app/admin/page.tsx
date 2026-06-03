@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Topbar } from "@/app/components/Topbar";
 import { signOut } from "./actions";
+import { MoodboardActions } from "./MoodboardActions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,8 @@ export default async function AdminPage() {
     .select("id, slug, name, client_name, created_at")
     .order("created_at", { ascending: false });
 
-  // contagem de respostas por moodboard
   const ids = moodboards?.map((m) => m.id) ?? [];
+
   const { data: respCounts } = ids.length
     ? await supabase
         .from("moodboard_responses")
@@ -24,6 +25,20 @@ export default async function AdminPage() {
   const counts = new Map<string, number>();
   (respCounts ?? []).forEach((r) => {
     counts.set(r.moodboard_id, (counts.get(r.moodboard_id) ?? 0) + 1);
+  });
+
+  const { data: refsForPaths } = ids.length
+    ? await supabase
+        .from("moodboard_references")
+        .select("moodboard_id, storage_path")
+        .in("moodboard_id", ids)
+    : { data: [] as { moodboard_id: string; storage_path: string | null }[] };
+  const pathsByMb = new Map<string, string[]>();
+  (refsForPaths ?? []).forEach((r) => {
+    if (!r.storage_path) return;
+    const arr = pathsByMb.get(r.moodboard_id) ?? [];
+    arr.push(r.storage_path);
+    pathsByMb.set(r.moodboard_id, arr);
   });
 
   return (
@@ -57,21 +72,24 @@ export default async function AdminPage() {
         ) : (
           <div className="inbox-grid">
             {moodboards.map((m) => (
-              <Link key={m.id} href={`/admin/${m.id}`} className="inbox-card">
-                <div className="inbox-name">{m.name}</div>
-                {m.client_name && <div className="inbox-meta">Cliente: {m.client_name}</div>}
-                <div className="inbox-meta">
-                  {new Date(m.created_at).toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </div>
-                <div className="inbox-stats">
-                  <span>📬 {counts.get(m.id) ?? 0} respostas</span>
-                </div>
-                <div className="inbox-open">Ver detalhes →</div>
-              </Link>
+              <div key={m.id} className="inbox-card-wrap">
+                <Link href={`/admin/${m.id}`} className="inbox-card">
+                  <div className="inbox-name">{m.name}</div>
+                  {m.client_name && <div className="inbox-meta">Cliente: {m.client_name}</div>}
+                  <div className="inbox-meta">
+                    {new Date(m.created_at).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <div className="inbox-stats">
+                    <span>📬 {counts.get(m.id) ?? 0} respostas</span>
+                  </div>
+                  <div className="inbox-open">Ver detalhes →</div>
+                </Link>
+                <MoodboardActions id={m.id} storagePaths={pathsByMb.get(m.id) ?? []} />
+              </div>
             ))}
           </div>
         )}
